@@ -30,9 +30,10 @@
 
 - [ ] T001 Create root `build.gradle.kts` with Android Gradle Plugin 8.1+ and Kotlin 1.9+ in `build.gradle.kts`
 - [ ] T002 Create `settings.gradle.kts` with module registration structure in `settings.gradle.kts`
-- [ ] T003 [P] Create `gradle/libs.versions.toml` with version catalog (Compose BOM, Hilt, Navigation, Retrofit, Coroutines) in `gradle/libs.versions.toml`
+- [ ] T003 [P] Create `gradle/libs.versions.toml` with version catalog including all versions (Kotlin, AGP, Compose BOM, Hilt, Navigation, Retrofit, OkHttp, Coroutines, JUnit, MockK, Turbine, Compose Testing) in `gradle/libs.versions.toml`
 - [ ] T004 [P] Create `gradle.properties` with Android build properties (org.gradle.jvmargs, android.useAndroidX, etc.) in `gradle.properties`
 - [ ] T005 [P] Create `gradle/wrapper/gradle-wrapper.properties` with Gradle 8.0+ in `gradle/wrapper/gradle-wrapper.properties`
+- [ ] T005a [P] Verify all dependencies use version catalog: check that no hardcoded versions in build.gradle.kts files, all use `libs.versions.*`
 
 **Commands to verify**: `./gradlew tasks`
 
@@ -84,9 +85,10 @@
 - [ ] T032 Create `core/network/build.gradle.kts` with Retrofit/OkHttp dependencies, `core:common`, `core:auth-contract` in `core/network/build.gradle.kts`
 - [ ] T033 [US3] Create `NetworkResult.kt` sealed class in `core/network/src/main/java/com/eastclinic/core/network/NetworkResult.kt`
 - [ ] T034 [US3] Create `NetworkError.kt` data class in `core/network/src/main/java/com/eastclinic/core/network/NetworkError.kt`
-- [ ] T035 [US3] Create `safeCall.kt` suspend function with error mapping in `core/network/src/main/java/com/eastclinic/core/network/safeCall.kt`
-- [ ] T036 Register `core:network` module in `settings.gradle.kts`
-- [ ] T037 Verify `core:network` compiles: `./gradlew :core:network:build`
+- [ ] T035 [US3] Create `NetworkErrorMapper.kt` extension function `NetworkError.toAppError()` in `core/network/src/main/java/com/eastclinic/core/network/NetworkErrorMapper.kt`
+- [ ] T036 [US3] Create `safeCall.kt` suspend function with error mapping in `core/network/src/main/java/com/eastclinic/core/network/safeCall.kt`
+- [ ] T037 Register `core:network` module in `settings.gradle.kts`
+- [ ] T038 Verify `core:network` compiles: `./gradlew :core:network:build`
 
 **Commands to verify**: `./gradlew :core:common:build :core:async:build :core:ui:build :core:auth-contract:build :core:push-contract:build :core:network:build`
 
@@ -94,11 +96,11 @@
 
 ### Test Infrastructure
 
-- [ ] T038 [US6] Create `FakeClock.kt` test implementation in `core/async/src/test/java/com/eastclinic/core/async/FakeClock.kt`
-- [ ] T039 [US6] Create `TestDispatchers.kt` test implementation in `core/async/src/test/java/com/eastclinic/core/async/TestDispatchers.kt`
-- [ ] T040 [US6] Create `ResultFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/ResultFactory.kt`
-- [ ] T041 [US6] Create `AppErrorFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/AppErrorFactory.kt`
-- [ ] T042 [US6] Add test dependencies (JUnit 5, MockK, Turbine) to `core/common/build.gradle.kts` and `core/async/build.gradle.kts`
+- [ ] T039 [US6] Create `FakeClock.kt` test implementation in `core/async/src/test/java/com/eastclinic/core/async/FakeClock.kt`
+- [ ] T040 [US6] Create `TestDispatchers.kt` test implementation in `core/async/src/test/java/com/eastclinic/core/async/TestDispatchers.kt`
+- [ ] T041 [US6] Create `ResultFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/ResultFactory.kt`
+- [ ] T042 [US6] Create `AppErrorFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/AppErrorFactory.kt`
+- [ ] T043 [US6] Add test dependencies (JUnit 5, MockK, Turbine) to `core/common/build.gradle.kts` and `core/async/build.gradle.kts`
 
 **Commands to verify**: `./gradlew :core:common:test :core:async:test`
 
@@ -106,12 +108,18 @@
 
 ### Hilt Setup
 
-- [ ] T043 Create `app/build.gradle.kts` with Android application plugin, Hilt, Compose dependencies in `app/build.gradle.kts`
-- [ ] T044 Create `EastclinicApplication.kt` with `@HiltAndroidApp` in `app/src/main/java/com/eastclinic/app/EastclinicApplication.kt`
-- [ ] T045 Create `AndroidManifest.xml` with Application class reference in `app/src/main/AndroidManifest.xml`
-- [ ] T046 Create `AppModule.kt` Hilt module in `app/src/main/java/com/eastclinic/app/di/AppModule.kt`
-- [ ] T047 Register `app` module in `settings.gradle.kts`
-- [ ] T048 Verify app compiles: `./gradlew :app:assembleDebug`
+- [ ] T044 Create `app/build.gradle.kts` with Android application plugin, Hilt, Compose dependencies in `app/build.gradle.kts`
+- [ ] T045 Create `EastclinicApplication.kt` with `@HiltAndroidApp` in `app/src/main/java/com/eastclinic/app/EastclinicApplication.kt`
+- [ ] T046 Create `AndroidManifest.xml` with Application class reference in `app/src/main/AndroidManifest.xml`
+- [ ] T047 Create `AppModule.kt` Hilt module in `app/src/main/java/com/eastclinic/app/di/AppModule.kt`
+- [ ] T048 Register `app` module in `settings.gradle.kts`
+- [ ] T049 Verify app compiles: `./gradlew :app:assembleDebug`
+
+### Example Hilt Module for Feature
+
+- [ ] T050 [US2] Create example `AuthDataModule.kt` Hilt module with `@Binds` for AuthRepository in `feature/auth/data/src/main/java/com/eastclinic/auth/data/di/AuthDataModule.kt`
+- [ ] T051 [US2] Create stub `AuthRepositoryImpl.kt` implementing AuthRepository interface in `feature/auth/data/src/main/java/com/eastclinic/auth/data/repository/AuthRepositoryImpl.kt`
+- [ ] T052 [US2] Verify Hilt module compiles and binds correctly: `./gradlew :feature:auth:data:build`
 
 **Commands to verify**: `./gradlew :app:assembleDebug`
 
@@ -129,10 +137,10 @@
 
 **Done when**: Приложение запускается без крашей, отображается простой экран
 
-- [ ] T049 [US1] Create minimal `MainActivity.kt` with Compose in `app/src/main/java/com/eastclinic/app/MainActivity.kt`
-- [ ] T050 [US1] Create `RootScreen.kt` stub composable in `app/src/main/java/com/eastclinic/app/RootScreen.kt`
-- [ ] T051 [US1] Update `AndroidManifest.xml` with MainActivity launcher in `app/src/main/AndroidManifest.xml`
-- [ ] T052 [US1] Verify app builds and launches: `./gradlew :app:installDebug` then launch on device
+- [ ] T053 [US1] Create minimal `MainActivity.kt` with Compose in `app/src/main/java/com/eastclinic/app/MainActivity.kt`
+- [ ] T054 [US1] Create `RootScreen.kt` stub composable in `app/src/main/java/com/eastclinic/app/RootScreen.kt`
+- [ ] T055 [US1] Update `AndroidManifest.xml` with MainActivity launcher in `app/src/main/AndroidManifest.xml`
+- [ ] T056 [US1] Verify app builds and launches: `./gradlew :app:installDebug` then launch on device
 
 **Commands to verify**: `./gradlew :app:assembleDebug && ./gradlew :app:installDebug`
 
@@ -154,11 +162,11 @@
 
 Для каждого feature (auth, home, clinics, doctors, appointments, chat):
 
-- [ ] T053 [US2] Create `feature/<feature>/presentation/build.gradle.kts` with dependencies on `:feature:<feature>:domain`, `:core:ui`, `:core:common` in `feature/<feature>/presentation/build.gradle.kts`
-- [ ] T054 [US2] Create `feature/<feature>/domain/build.gradle.kts` with dependency only on `:core:common` in `feature/<feature>/domain/build.gradle.kts`
-- [ ] T055 [US2] Create `feature/<feature>/data/build.gradle.kts` with dependencies on `:feature:<feature>:domain`, `:core:network`, `:core:common` in `feature/<feature>/data/build.gradle.kts`
-- [ ] T056 [US2] Register all three modules in `settings.gradle.kts`
-- [ ] T057 [US2] Verify each module compiles: `./gradlew :feature:<feature>:presentation:build :feature:<feature>:domain:build :feature:<feature>:data:build`
+- [ ] T057 [US2] Create `feature/<feature>/presentation/build.gradle.kts` with dependencies on `:feature:<feature>:domain`, `:core:ui`, `:core:common` in `feature/<feature>/presentation/build.gradle.kts`
+- [ ] T058 [US2] Create `feature/<feature>/domain/build.gradle.kts` with dependency only on `:core:common` in `feature/<feature>/domain/build.gradle.kts`
+- [ ] T059 [US2] Create `feature/<feature>/data/build.gradle.kts` with dependencies on `:feature:<feature>:domain`, `:core:network`, `:core:common`, Hilt in `feature/<feature>/data/build.gradle.kts`
+- [ ] T060 [US2] Register all three modules in `settings.gradle.kts`
+- [ ] T061 [US2] Verify each module compiles: `./gradlew :feature:<feature>:presentation:build :feature:<feature>:domain:build :feature:<feature>:data:build`
 
 **Commands to verify**: `./gradlew build` (все модули)
 
@@ -178,15 +186,16 @@
 
 ### Unit Tests for Base Types
 
-- [ ] T058 [US6] [US3] Create `ResultTest.kt` with tests for Success and Error variants in `core/common/src/test/java/com/eastclinic/core/common/ResultTest.kt`
-- [ ] T059 [US6] [US3] Create `AppErrorTest.kt` with tests for all sealed class variants in `core/common/src/test/java/com/eastclinic/core/common/AppErrorTest.kt`
-- [ ] T060 [US6] [US3] Verify tests pass: `./gradlew :core:common:test`
+- [ ] T062 [US6] [US3] Create `ResultTest.kt` with tests for Success and Error variants in `core/common/src/test/java/com/eastclinic/core/common/ResultTest.kt`
+- [ ] T063 [US6] [US3] Create `AppErrorTest.kt` with tests for all sealed class variants in `core/common/src/test/java/com/eastclinic/core/common/AppErrorTest.kt`
+- [ ] T064 [US6] [US3] Create `NetworkErrorMapperTest.kt` with tests for NetworkError.toAppError() mapping in `core/network/src/test/java/com/eastclinic/core/network/NetworkErrorMapperTest.kt`
+- [ ] T065 [US6] [US3] Verify tests pass: `./gradlew :core:common:test :core:network:test`
 
 ### Example Usage in Feature Module
 
-- [ ] T061 [US3] Create stub `User.kt` domain model using Result<T> in `feature/auth/domain/src/main/java/com/eastclinic/auth/domain/model/User.kt`
-- [ ] T062 [US3] Create stub `AuthRepository.kt` interface returning Result<User> in `feature/auth/domain/src/main/java/com/eastclinic/auth/domain/repository/AuthRepository.kt`
-- [ ] T063 [US3] Verify feature:auth:domain compiles with base types: `./gradlew :feature:auth:domain:build`
+- [ ] T066 [US3] Create stub `User.kt` domain model using Result<T> in `feature/auth/domain/src/main/java/com/eastclinic/auth/domain/model/User.kt`
+- [ ] T067 [US3] Create stub `AuthRepository.kt` interface returning Result<User> in `feature/auth/domain/src/main/java/com/eastclinic/auth/domain/repository/AuthRepository.kt`
+- [ ] T068 [US3] Verify feature:auth:domain compiles with base types: `./gradlew :feature:auth:domain:build`
 
 **Commands to verify**: `./gradlew :core:common:test :feature:auth:domain:build`
 
@@ -206,12 +215,12 @@
 
 ### Stub Screen Implementation (LoginScreen as example)
 
-- [ ] T064 [US4] Create `LoginUiState.kt` data class in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiState.kt`
-- [ ] T065 [US4] Create `LoginUiEvent.kt` sealed class in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiEvent.kt`
-- [ ] T066 [US4] Create `LoginUiEffect.kt` sealed class extending UiEffect in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiEffect.kt`
-- [ ] T067 [US4] Create `LoginViewModel.kt` with StateFlow<UiState>, event handling, SharedFlow<UiEffect> in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginViewModel.kt`
-- [ ] T068 [US4] Create `LoginScreen.kt` composable with LaunchedEffect for UiEffect handling in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginScreen.kt`
-- [ ] T069 [US4] Verify feature:auth:presentation compiles: `./gradlew :feature:auth:presentation:build`
+- [ ] T069 [US4] Create `LoginUiState.kt` data class in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiState.kt`
+- [ ] T070 [US4] Create `LoginUiEvent.kt` sealed class in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiEvent.kt`
+- [ ] T071 [US4] Create `LoginUiEffect.kt` sealed class extending UiEffect in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginUiEffect.kt`
+- [ ] T072 [US4] Create `LoginViewModel.kt` with StateFlow<UiState>, event handling, SharedFlow<UiEffect> in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginViewModel.kt`
+- [ ] T073 [US4] Create `LoginScreen.kt` composable with LaunchedEffect for UiEffect handling in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginScreen.kt`
+- [ ] T074 [US4] Verify feature:auth:presentation compiles: `./gradlew :feature:auth:presentation:build`
 
 **Commands to verify**: `./gradlew :feature:auth:presentation:build`
 
@@ -231,32 +240,39 @@
 
 ### Navigation Routes in Feature Modules
 
-- [ ] T070 [US5] Create `AuthRoutes.kt` with route constants in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/navigation/AuthRoutes.kt`
-- [ ] T071 [US5] Create `authGraph()` function in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/navigation/authGraph.kt`
-- [ ] T072 [US5] Repeat T070-T071 for home, clinics, doctors, appointments, chat features
+- [ ] T075 [US5] Create `AuthRoutes.kt` with route constants in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/navigation/AuthRoutes.kt`
+- [ ] T076 [US5] Create `authGraph()` function in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/navigation/authGraph.kt`
+- [ ] T077 [US5] Repeat T075-T076 for home, clinics, doctors, appointments, chat features
 
 ### Stub Screens for All Features
 
-- [ ] T073 [US5] Create `HomeScreen.kt` stub in `feature/home/presentation/src/main/java/com/eastclinic/home/presentation/HomeScreen.kt`
-- [ ] T074 [US5] Create `ClinicsScreen.kt` stub in `feature/clinics/presentation/src/main/java/com/eastclinic/clinics/presentation/ClinicsScreen.kt`
-- [ ] T075 [US5] Create `DoctorsScreen.kt` stub in `feature/doctors/presentation/src/main/java/com/eastclinic/doctors/presentation/DoctorsScreen.kt`
-- [ ] T076 [US5] Create `AppointmentsScreen.kt` stub in `feature/appointments/presentation/src/main/java/com/eastclinic/appointments/presentation/AppointmentsScreen.kt`
-- [ ] T077 [US5] Create `ChatScreen.kt` stub in `feature/chat/presentation/src/main/java/com/eastclinic/chat/presentation/ChatScreen.kt`
+- [ ] T078 [US5] Create `HomeScreen.kt` stub in `feature/home/presentation/src/main/java/com/eastclinic/home/presentation/HomeScreen.kt`
+- [ ] T079 [US5] Create `ClinicsScreen.kt` stub in `feature/clinics/presentation/src/main/java/com/eastclinic/clinics/presentation/ClinicsScreen.kt`
+- [ ] T080 [US5] Create `DoctorsScreen.kt` stub in `feature/doctors/presentation/src/main/java/com/eastclinic/doctors/presentation/DoctorsScreen.kt`
+- [ ] T081 [US5] Create `AppointmentsScreen.kt` stub in `feature/appointments/presentation/src/main/java/com/eastclinic/appointments/presentation/AppointmentsScreen.kt`
+- [ ] T082 [US5] Create `ChatScreen.kt` stub in `feature/chat/presentation/src/main/java/com/eastclinic/chat/presentation/ChatScreen.kt`
 
 ### Root Navigation Graph
 
-- [ ] T078 [US5] Create `RootNavGraph.kt` composing all feature subgraphs in `app/src/main/java/com/eastclinic/app/navigation/RootNavGraph.kt`
-- [ ] T079 [US5] Update `MainActivity.kt` to use RootNavGraph in `app/src/main/java/com/eastclinic/app/MainActivity.kt`
-- [ ] T080 [US5] Implement `UiEffect.Navigate` handling in app module in `app/src/main/java/com/eastclinic/app/navigation/NavigationHandler.kt`
+- [ ] T083 [US5] Create `RootNavGraph.kt` composing all feature subgraphs in `app/src/main/java/com/eastclinic/app/navigation/RootNavGraph.kt`
+- [ ] T084 [US5] Update `MainActivity.kt` to use RootNavGraph in `app/src/main/java/com/eastclinic/app/MainActivity.kt`
+- [ ] T085 [US5] Implement `UiEffect.Navigate` handling in app module in `app/src/main/java/com/eastclinic/app/navigation/NavigationHandler.kt`
 
 ### Navigation Flow Implementation
 
-- [ ] T081 [US5] Connect LoginScreen → HomeScreen navigation via UiEffect.Navigate in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginViewModel.kt`
-- [ ] T082 [US5] Connect HomeScreen → ClinicsScreen navigation
-- [ ] T083 [US5] Connect ClinicsScreen → DoctorsScreen navigation
-- [ ] T084 [US5] Connect DoctorsScreen → AppointmentsScreen navigation
-- [ ] T085 [US5] Connect AppointmentsScreen → ChatScreen navigation
-- [ ] T086 [US5] Verify navigation works: launch app and navigate through all screens
+- [ ] T086 [US5] Connect LoginScreen → HomeScreen navigation via UiEffect.Navigate in `feature/auth/presentation/src/main/java/com/eastclinic/auth/presentation/login/LoginViewModel.kt`
+- [ ] T087 [US5] Connect HomeScreen → ClinicsScreen navigation
+- [ ] T088 [US5] Connect ClinicsScreen → DoctorsScreen navigation
+- [ ] T089 [US5] Connect DoctorsScreen → AppointmentsScreen navigation
+- [ ] T090 [US5] Connect AppointmentsScreen → ChatScreen navigation
+- [ ] T091 [US5] Verify navigation works: launch app and navigate through all screens
+
+### UI Tests for Navigation
+
+- [ ] T092 [US6] [US5] Add Compose Testing dependency to `app/build.gradle.kts`
+- [ ] T093 [US6] [US5] Create `NavigationTest.kt` UI test verifying navigation between stub screens in `app/src/androidTest/java/com/eastclinic/app/navigation/NavigationTest.kt`
+- [ ] T094 [US6] [US5] Create `ScreenDisplayTest.kt` UI test verifying stub screens display correctly in `app/src/androidTest/java/com/eastclinic/app/ui/ScreenDisplayTest.kt`
+- [ ] T095 [US6] [US5] Verify UI tests pass: `./gradlew :app:connectedAndroidTest` (requires device/emulator)
 
 **Commands to verify**: `./gradlew :app:assembleDebug && ./gradlew :app:installDebug`, then manual navigation test
 
@@ -276,14 +292,21 @@
 
 ### ViewModel Test Example
 
-- [ ] T087 [US6] [US4] Create `LoginViewModelTest.kt` demonstrating UiState/UiEvent/UiEffect testing in `feature/auth/presentation/src/test/java/com/eastclinic/auth/presentation/login/LoginViewModelTest.kt`
-- [ ] T088 [US6] [US4] Verify ViewModel test passes: `./gradlew :feature:auth:presentation:test`
+- [ ] T096 [US6] [US4] Create `LoginViewModelTest.kt` demonstrating UiState/UiEvent/UiEffect testing in `feature/auth/presentation/src/test/java/com/eastclinic/auth/presentation/login/LoginViewModelTest.kt`
+- [ ] T097 [US6] [US4] Verify ViewModel test passes: `./gradlew :feature:auth:presentation:test`
 
 ### Integration Tests for Module Structure
 
-- [ ] T089 [US6] [US2] Create `ModuleDependencyTest.kt` verifying no Android types in domain modules in `app/src/test/java/com/eastclinic/app/ModuleDependencyTest.kt`
-- [ ] T090 [US6] [US2] Create `DependencyGraphTest.kt` verifying acyclic core dependencies in `app/src/test/java/com/eastclinic/app/DependencyGraphTest.kt`
-- [ ] T091 [US6] Verify integration tests pass: `./gradlew :app:test`
+- [ ] T098 [US6] [US2] Create `ModuleDependencyTest.kt` verifying no Android types in domain modules in `app/src/test/java/com/eastclinic/app/ModuleDependencyTest.kt`
+- [ ] T099 [US6] [US2] Create `DependencyGraphTest.kt` verifying acyclic core dependencies in `app/src/test/java/com/eastclinic/app/DependencyGraphTest.kt`
+- [ ] T100 [US6] Verify integration tests pass: `./gradlew :app:test`
+
+### Dependency Graph Analysis
+
+- [ ] T101 [US2] Create script or task to analyze dependency graph: `./gradlew :app:dependencies > dependencies.txt`
+- [ ] T102 [US2] Verify no circular dependencies exist in dependency graph output
+- [ ] T103 [US2] Verify core:auth-contract does NOT depend on core:network in dependency graph
+- [ ] T104 [US2] Verify all domain modules have no Android/Retrofit/Room dependencies (manual code review or script)
 
 **Commands to verify**: `./gradlew test`
 
@@ -299,13 +322,13 @@
 
 **Done when**: Все проверки пройдены, проект готов к разработке фич
 
-- [ ] T092 [P] Run full build: `./gradlew clean build`
-- [ ] T093 [P] Run all tests: `./gradlew test`
-- [ ] T094 [P] Verify no dependency cycles: `./gradlew :app:dependencies` (manual review)
-- [ ] T095 [P] Verify domain modules have no Android/Retrofit/Room imports (manual code review or script)
-- [ ] T096 [P] Create minimal CI workflow file `.github/workflows/build.yml` with build and test steps
-- [ ] T097 [P] Update `quickstart.md` with actual setup instructions if needed
-- [ ] T098 [P] Verify app launches and navigation works on device/emulator
+- [ ] T105 [P] Run full build: `./gradlew clean build`
+- [ ] T106 [P] Run all unit tests: `./gradlew test`
+- [ ] T107 [P] Run all UI tests: `./gradlew connectedAndroidTest` (requires device/emulator)
+- [ ] T108 [P] Verify dependency graph: run T101-T104 tasks
+- [ ] T109 [P] Create minimal CI workflow file `.github/workflows/build.yml` with build, test, and dependency check steps
+- [ ] T110 [P] Update `quickstart.md` with actual setup instructions if needed
+- [ ] T111 [P] Verify app launches and navigation works on device/emulator
 
 **Commands to verify**: `./gradlew clean build test`
 
@@ -425,12 +448,12 @@ Task T053: Create feature/chat/presentation/build.gradle.kts
 4. Phase 4: US2 (2-3 часа)
 5. Phase 5: US3 (1-2 часа)
 6. Phase 6: US4 (2-3 часа)
-7. Phase 7: US5 (3-4 часа, опционально)
-8. Phase 8: US6 (2-3 часа, опционально)
-9. Phase 9: Polish (1 час)
+7. Phase 7: US5 (4-5 часов, опционально) - включает UI тесты
+8. Phase 8: US6 (3-4 часа, опционально) - включает dependency graph analysis
+9. Phase 9: Polish (1-2 часа)
 
 **Общее время MVP (US1-US4)**: ~12-18 часов  
-**Общее время полного Step 0**: ~18-25 часов
+**Общее время полного Step 0**: ~20-28 часов (с учетом UI тестов и dependency analysis)
 
 ---
 

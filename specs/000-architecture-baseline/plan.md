@@ -22,7 +22,13 @@
 - Coroutines + Flow
 
 **Storage**: Не используется на Step 0 (core:database отложен)  
-**Testing**: JUnit 5, MockK, Turbine (для Flow тестов), Robolectric (для Android-тестов)  
+**Testing**: 
+- JUnit 5 для unit тестов
+- MockK для моков
+- Turbine для тестирования Flow
+- Robolectric для Android-тестов
+- Compose Testing (compose-ui-test-junit4) для UI тестов
+- Espresso (опционально) для интеграционных UI тестов
 **Target Platform**: Android API 24+ (Android 7.0+)  
 **Project Type**: Mobile (Android native)  
 **Performance Goals**: 
@@ -299,10 +305,15 @@ EastclinicApp/
 **Файлы**:
 - `settings.gradle.kts` — регистрация модулей
 - `build.gradle.kts` (root) — общие настройки
-- `gradle/libs.versions.toml` — version catalog
+- `gradle/libs.versions.toml` — version catalog (централизованное управление версиями)
 - `gradle.properties` — свойства сборки
 
-**Проверка**: `./gradlew tasks` выполняется без ошибок
+**Важно**: Все зависимости и версии должны управляться через `libs.versions.toml`:
+- Версии Kotlin, Android Gradle Plugin
+- Версии библиотек (Hilt, Compose BOM, Navigation, Retrofit, OkHttp, Coroutines)
+- Версии тестовых библиотек (JUnit, MockK, Turbine, Compose Testing)
+
+**Проверка**: `./gradlew tasks` выполняется без ошибок, все версии задекларированы в version catalog
 
 ### Step 2: Create Core Modules
 
@@ -380,9 +391,40 @@ EastclinicApp/
 
 **Проверки**:
 - `./gradlew build` — зелёная сборка
-- `./gradlew test` — все тесты проходят
+- `./gradlew test` — все unit тесты проходят
+- `./gradlew connectedAndroidTest` — UI тесты проходят (если добавлены)
 - Приложение запускается и навигация работает
-- Зависимости не нарушают правила (можно проверить через `./gradlew :app:dependencies`)
+- Зависимости не нарушают правила:
+  - `./gradlew :app:dependencies` — проверка графа зависимостей
+  - Проверка отсутствия циклических зависимостей
+  - Проверка отсутствия Android/Retrofit/Room типов в domain модулях
+  - Проверка отсутствия зависимости core:auth → core:network
+
+## Testing Strategy
+
+### Unit Tests
+- Базовые типы (Result, AppError) — 100% покрытие sealed class variants
+- Тестовые утилиты (FakeClock, TestDispatchers) — проверка функциональности
+- ViewModel — пример теста для демонстрации паттерна
+
+### Integration Tests
+- Проверка структуры модулей и зависимостей
+- Проверка отсутствия нарушений архитектурных правил
+- Проверка ацикличности графа зависимостей core модулей
+
+### UI Tests
+- Минимальные UI тесты для проверки навигации между stub экранами
+- Тесты отображения простых UI элементов
+- Использование Compose Testing для тестирования Compose компонентов
+
+### Flow Error Handling
+Все Flow операции в data слое должны использовать `catch` для обработки ошибок:
+```kotlin
+flow { ... }
+    .catch { exception ->
+        emit(Result.Error(mapToAppError(exception)))
+    }
+```
 
 ## Out of Scope for Step 0
 

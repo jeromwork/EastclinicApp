@@ -203,9 +203,43 @@ data class User(
 
 На Step 0 state transitions не определяются — только базовые типы для UI состояния (UiState, UiEvent, UiEffect).
 
+## Flow Error Handling Pattern
+
+При использовании Flow для асинхронных операций в data слое, все ошибки должны обрабатываться через `catch` оператор:
+
+```kotlin
+// В feature:<x>:data слое
+fun observeData(): Flow<Result<Data>> = flow {
+    emit(Result.Success(fetchData()))
+}.catch { exception ->
+    val networkError = when (exception) {
+        is HttpException -> NetworkError(
+            message = exception.message(),
+            code = exception.code()
+        )
+        is IOException -> NetworkError(
+            message = "Network error: ${exception.message}",
+            cause = exception
+        )
+        else -> NetworkError(
+            message = "Unknown error: ${exception.message}",
+            cause = exception
+        )
+    }
+    emit(Result.Error(networkError.toAppError()))
+}.flowOn(Dispatchers.IO)
+```
+
+**Правила**:
+- Все Flow операции в data слое должны использовать `.catch {}`
+- Ошибки маппятся в `NetworkError`, затем в `AppError` через `toAppError()`
+- Domain и presentation слои видят только `Result<T>` и `AppError`
+- Используйте `flowOn()` для указания dispatcher
+
 ## Notes
 
 - Все типы в domain слоях не содержат Android/Retrofit/Room типов
 - Feature-модули могут определять свои доменные ошибки, которые маппятся в AppError через data слой
-- NetworkError маппится в AppError.NetworkError в core:network
+- NetworkError маппится в AppError.NetworkError в core:network через extension функцию `toAppError()`
+- Flow операции всегда обрабатывают ошибки через `catch` оператор
 

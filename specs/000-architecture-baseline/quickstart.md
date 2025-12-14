@@ -165,18 +165,197 @@ feature/<feature-name>/
 2. Создайте функцию `NavGraphBuilder.<feature>Graph()` 
 3. Добавьте вызов в `app/navigation/RootNavGraph.kt`
 
-### 6. Add DI Module
+### 6. Create Domain Layer
 
-Создайте Hilt модуль в `feature:<feature-name>:data/di/`:
+**Domain Model** (`feature/<feature-name>/domain/src/main/java/com/eastclinic/<feature-name>/domain/model/`):
 
 ```kotlin
+// Example: User.kt
+data class User(
+    val id: String,
+    val name: String
+)
+```
+
+**Repository Interface** (`feature/<feature-name>/domain/src/main/java/com/eastclinic/<feature-name>/domain/repository/`):
+
+```kotlin
+// Example: UserRepository.kt
+interface UserRepository {
+    suspend fun getUser(id: String): Result<User>
+    fun observeUsers(): Flow<Result<List<User>>>
+}
+```
+
+**Важно**: Domain слой использует только `Result<T>` и `AppError` из `core:common`, никаких Android/Retrofit/Room типов.
+
+### 7. Create Data Layer
+
+**Repository Implementation** (`feature/<feature-name>/data/src/main/java/com/eastclinic/<feature-name>/data/repository/`):
+
+```kotlin
+// Example: UserRepositoryImpl.kt
+@Singleton
+class UserRepositoryImpl @Inject constructor(
+    private val api: UserApi, // Retrofit interface
+    private val dispatcherProvider: DispatcherProvider
+) : UserRepository {
+    
+    override suspend fun getUser(id: String): Result<User> {
+        return when (val networkResult = safeCall(dispatcherProvider.io) {
+            api.getUser(id)
+        }) {
+            is NetworkResult.Success -> Result.Success(networkResult.data.toDomain())
+            is NetworkResult.Error -> Result.Error(networkResult.error.toAppError())
+        }
+    }
+    
+    override fun observeUsers(): Flow<Result<List<User>>> = flow {
+        val users = fetchUsers()
+        emit(Result.Success(users))
+    }.catch { exception ->
+        val networkError = mapExceptionToNetworkError(exception)
+        emit(Result.Error(networkError.toAppError()))
+    }.flowOn(dispatcherProvider.io)
+}
+```
+
+**Важно**: 
+- Используйте `safeCall()` для suspend функций
+- Используйте `Flow.catch {}` для Flow операций
+- Всегда маппите `NetworkError` в `AppError` через `toAppError()`
+
+### 8. Add Hilt DI Module
+
+Создайте Hilt модуль в `feature/<feature-name>/data/src/main/java/com/eastclinic/<feature-name>/data/di/`:
+
+```kotlin
+// Example: UserDataModule.kt
 @Module
 @InstallIn(SingletonComponent::class)
-interface <Feature>DataModule {
+abstract class UserDataModule {
+    
     @Binds
-    fun bindRepository(
-        impl: <Feature>RepositoryImpl
-    ): <Feature>Repository
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
+    
+    companion object {
+        @Provides
+        @Singleton
+        fun provideUserApi(retrofit: Retrofit): UserApi {
+            return retrofit.create(UserApi::class.java)
+        }
+    }
+}
+```
+
+**Важно**: 
+- Используйте `@Binds` для интерфейсов
+- Используйте `@Provides` для конкретных типов (Retrofit, OkHttp и т.д.)
+- Модуль должен быть в data слое, где находится реализация
+
+### 9. Create Presentation Layer
+
+**UiState** (`feature/<feature-name>/presentation/src/main/java/com/eastclinic/<feature-name>/presentation/`):
+
+```kotlin
+// Example: UserUiState.kt
+data class UserUiState(
+    val isLoading: Boolean = false,
+    val user: User? = null,
+    val error: AppError? = null
+)
+```
+
+**UiEvent**:
+
+```kotlin
+// Example: UserUiEvent.kt
+sealed class UserUiEvent {
+    data class LoadUser(val id: String) : UserUiEvent()
+    object Refresh : UserUiEvent()
+}
+```
+
+**UiEffect**:
+
+```kotlin
+// Example: UserUiEffect.kt
+sealed class UserUiEffect : UiEffect {
+    data class NavigateToDetails(val userId: String) : UserUiEffect()
+    data class ShowError(val message: String) : UserUiEffect()
+}
+```
+
+**ViewModel**:
+
+```kotlin
+// Example: UserViewModel.kt
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val dispatcherProvider: DispatcherProvider
+) : ViewModel() {
+    
+    private val _uiState = MutableStateFlow(UserUiState())
+    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+    
+    private val _uiEffect = MutableSharedFlow<UserUiEffect>()
+    val uiEffect: SharedFlow<UserUiEffect> = _uiEffect.asSharedFlow()
+    
+    fun handleEvent(event: UserUiEvent) {
+        when (event) {
+            is UserUiEvent.LoadUser -> loadUser(event.id)
+            is UserUiEvent.Refresh -> refresh()
+        }
+    }
+    
+    private fun loadUser(id: String) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val result = userRepository.getUser(id)) {
+                is Result.Success -> {
+                    _uiState.update { 
+                        it.copy(isLoading = false, user = result.data) 
+                    }
+                }
+                is Result.Error -> {
+                    _uiState.update { 
+                        it.copy(isLoading = false, error = result.error) 
+                    }
+                    _uiEffect.emit(UserUiEffect.ShowError(result.error.message))
+                }
+            }
+        }
+    }
+}
+```
+
+**Screen**:
+
+```kotlin
+// Example: UserScreen.kt
+@Composable
+fun UserScreen(
+    viewModel: UserViewModel = hiltViewModel(),
+    onNavigate: (String) -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val uiEffect = remember { viewModel.uiEffect }
+    
+    LaunchedEffect(Unit) {
+        uiEffect.collect { effect ->
+            when (effect) {
+                is UserUiEffect.NavigateToDetails -> 
+                    onNavigate(effect.userId)
+                is UserUiEffect.ShowError -> 
+                    // Show snackbar or toast
+            }
+        }
+    }
+    
+    // UI implementation
 }
 ```
 
@@ -194,10 +373,48 @@ interface <Feature>DataModule {
 ./gradlew :core:common:test
 ```
 
-### Run Instrumented Tests
+### Run UI Tests (Compose Testing)
 
 ```bash
 ./gradlew connectedAndroidTest
+```
+
+**Требования**: UI тесты требуют запущенного эмулятора или подключенного устройства.
+
+### Testing Patterns
+
+**Unit Tests для ViewModel**:
+
+```kotlin
+@Test
+fun `when LoadUser event, then state updates correctly`() = runTest {
+    // Given
+    val repository = mockk<UserRepository>()
+    coEvery { repository.getUser("1") } returns Result.Success(User("1", "Test"))
+    
+    // When
+    val viewModel = UserViewModel(repository, TestDispatchers())
+    viewModel.handleEvent(UserUiEvent.LoadUser("1"))
+    
+    // Then
+    val state = viewModel.uiState.value
+    assertEquals(false, state.isLoading)
+    assertEquals("Test", state.user?.name)
+}
+```
+
+**UI Tests для Navigation**:
+
+```kotlin
+@Test
+fun testNavigationBetweenScreens() {
+    composeTestRule.setContent {
+        RootNavGraph()
+    }
+    
+    composeTestRule.onNodeWithText("Login").performClick()
+    composeTestRule.onNodeWithText("Home").assertIsDisplayed()
+}
 ```
 
 ## Common Commands
@@ -222,6 +439,41 @@ interface <Feature>DataModule {
 ./gradlew :app:dependencies
 ```
 
+## Dependency Graph Analysis
+
+### Check Dependencies
+
+```bash
+# Получить полный граф зависимостей
+./gradlew :app:dependencies > dependencies.txt
+
+# Проверить зависимости конкретного модуля
+./gradlew :feature:auth:domain:dependencies
+```
+
+### Verify Architecture Rules
+
+1. **Domain модули не должны зависеть от Android/Retrofit/Room**:
+   ```bash
+   # Проверить зависимости domain модуля
+   ./gradlew :feature:auth:domain:dependencies | grep -i "android\|retrofit\|room"
+   # Должно быть пусто
+   ```
+
+2. **Core модули не должны иметь циклических зависимостей**:
+   ```bash
+   # Проверить, что core:auth-contract не зависит от core:network
+   ./gradlew :core:auth-contract:dependencies | grep "core:network"
+   # Должно быть пусто
+   ```
+
+3. **Feature модули не должны зависеть друг от друга**:
+   ```bash
+   # Проверить зависимости feature модуля
+   ./gradlew :feature:auth:presentation:dependencies | grep "feature:"
+   # Должны быть только зависимости от собственных модулей (auth:domain, auth:data)
+   ```
+
 ## Troubleshooting
 
 ### Build Fails
@@ -229,18 +481,56 @@ interface <Feature>DataModule {
 1. Проверьте версию JDK: `java -version` (должна быть 17+)
 2. Очистите кеш: `./gradlew clean`
 3. Invalidate caches в Android Studio: File → Invalidate Caches
+4. Проверьте, что все версии в `libs.versions.toml` актуальны
+
+### Version Catalog Issues
+
+1. Убедитесь, что все зависимости используют version catalog:
+   ```kotlin
+   // ✅ Правильно
+   implementation(libs.compose.ui)
+   
+   // ❌ Неправильно
+   implementation("androidx.compose.ui:ui:1.5.0")
+   ```
+
+2. Проверьте, что все версии задекларированы в `gradle/libs.versions.toml`
 
 ### Navigation Not Working
 
 1. Убедитесь, что routes правильно определены
 2. Проверьте, что подграфы подключены в RootNavGraph
 3. Проверьте обработку UiEffect.Navigate в app модуле
+4. Убедитесь, что Compose Navigation dependency добавлена
 
 ### DI Not Working
 
 1. Убедитесь, что @HiltAndroidApp в Application классе
-2. Проверьте, что Hilt модули правильно установлены
-3. Проверьте зависимости в build.gradle.kts
+2. Проверьте, что Hilt модули правильно установлены (@InstallIn)
+3. Проверьте зависимости в build.gradle.kts (kapt или ksp для Hilt)
+4. Убедитесь, что @Inject конструкторы правильные
+
+### Flow Error Handling
+
+Если Flow не обрабатывает ошибки правильно:
+
+1. Убедитесь, что используется `.catch {}` оператор:
+   ```kotlin
+   flow { ... }
+       .catch { exception ->
+           emit(Result.Error(mapToAppError(exception)))
+       }
+   ```
+
+2. Проверьте, что ошибки маппятся в AppError:
+   ```kotlin
+   NetworkError(...).toAppError()
+   ```
+
+3. Убедитесь, что Flow использует правильный dispatcher:
+   ```kotlin
+   .flowOn(dispatcherProvider.io)
+   ```
 
 ## Next Steps
 

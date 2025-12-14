@@ -66,16 +66,27 @@ suspend fun <T> safeCall(
 
 ## Error Mapping
 
-NetworkError маппится в AppError.NetworkError в data слоях feature модулей:
+NetworkError маппится в AppError.NetworkError в data слоях feature модулей. Маппинг реализуется через extension функцию в core:network:
 
 ```kotlin
+// В core:network/src/main/java/com/eastclinic/core/network/NetworkErrorMapper.kt
 fun NetworkError.toAppError(): AppError {
     return AppError.NetworkError(
         message = this.message,
         code = this.code
     )
 }
+
+// Использование в feature:data слоях:
+suspend fun getData(): Result<Data> {
+    return when (val networkResult = safeCall { api.getData() }) {
+        is NetworkResult.Success -> Result.Success(networkResult.data.toDomain())
+        is NetworkResult.Error -> Result.Error(networkResult.error.toAppError())
+    }
+}
 ```
+
+**Важно**: Маппинг происходит в data слое, domain и presentation видят только AppError.
 
 ## Interceptors
 
@@ -109,10 +120,41 @@ Retrofit настраивается в core:network, но его типы не �
 3. Маппинг DTO → Domain model в `feature:<x>:data/mapper/`
 4. Repository реализует domain интерфейс, используя API через safeCall
 
+## Flow Error Handling
+
+При использовании Flow для асинхронных операций, ошибки обрабатываются через `catch` оператор с маппингом в AppError:
+
+```kotlin
+// В feature:data слое
+fun observeData(): Flow<Result<Data>> = flow {
+    emit(Result.Success(fetchData()))
+}.catch { exception ->
+    val networkError = when (exception) {
+        is HttpException -> NetworkError(
+            message = exception.message(),
+            code = exception.code()
+        )
+        is IOException -> NetworkError(
+            message = "Network error: ${exception.message}",
+            cause = exception
+        )
+        else -> NetworkError(
+            message = "Unknown error: ${exception.message}",
+            cause = exception
+        )
+    }
+    emit(Result.Error(networkError.toAppError()))
+}.flowOn(Dispatchers.IO)
+```
+
+**Паттерн**: Все Flow операции в data слое должны использовать `catch` для обработки ошибок и маппинга в AppError перед передачей в domain слой.
+
 ## Notes
 
 - Все сетевые ошибки нормализуются в AppError
 - NetworkError не утекает в domain/presentation
 - safeCall обеспечивает единообразную обработку ошибок
+- Flow операции используют `catch` для обработки ошибок
 - Интерцепторы настраиваются через Hilt в core:network DI модуле
+- Маппинг NetworkError → AppError происходит в data слое через extension функцию
 
