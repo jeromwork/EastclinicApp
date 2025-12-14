@@ -1,0 +1,23 @@
+# Cursor IDE local settings
+.cursor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build files
+build/
+.gradle/
+*.iml
+
+# Local environment
+.env
+.env.local
+
