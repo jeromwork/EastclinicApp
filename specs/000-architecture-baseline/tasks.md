@@ -100,7 +100,7 @@
 - [ ] T040 [US6] Create `TestDispatchers.kt` test implementation in `core/async/src/test/java/com/eastclinic/core/async/TestDispatchers.kt`
 - [ ] T041 [US6] Create `ResultFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/ResultFactory.kt`
 - [ ] T042 [US6] Create `AppErrorFactory.kt` test utilities in `core/common/src/test/java/com/eastclinic/core/common/AppErrorFactory.kt`
-- [ ] T043 [US6] Add test dependencies (JUnit 5, MockK, Turbine) to `core/common/build.gradle.kts` and `core/async/build.gradle.kts`
+- [ ] T043 [US6] Add test dependencies (JUnit 4, MockK, Turbine, kotlinx-coroutines-test) to `core/common/build.gradle.kts` and `core/async/build.gradle.kts`
 
 **Commands to verify**: `./gradlew :core:common:test :core:async:test`
 
@@ -295,18 +295,19 @@
 - [ ] T096 [US6] [US4] Create `LoginViewModelTest.kt` demonstrating UiState/UiEvent/UiEffect testing in `feature/auth/presentation/src/test/java/com/eastclinic/auth/presentation/login/LoginViewModelTest.kt`
 - [ ] T097 [US6] [US4] Verify ViewModel test passes: `./gradlew :feature:auth:presentation:test`
 
-### Integration Tests for Module Structure
+### Build-Time Checks for Module Structure
 
-- [ ] T098 [US6] [US2] Create `ModuleDependencyTest.kt` verifying no Android types in domain modules in `app/src/test/java/com/eastclinic/app/ModuleDependencyTest.kt`
-- [ ] T099 [US6] [US2] Create `DependencyGraphTest.kt` verifying acyclic core dependencies in `app/src/test/java/com/eastclinic/app/DependencyGraphTest.kt`
-- [ ] T100 [US6] Verify integration tests pass: `./gradlew :app:test`
+- [ ] T098 [US6] [US2] Verify domain modules use `kotlin("jvm")` plugin (not `com.android.library`) in all `feature:*:domain/build.gradle.kts`
+- [ ] T099 [US6] [US2] Verify domain modules have no Android/Retrofit/Room dependencies in `build.gradle.kts` files
+- [ ] T100 [US6] [US2] Run dependency analysis: `./gradlew :app:dependencies > dependencies.txt` and verify no feature-to-feature dependencies
+- [ ] T101 [US6] [US2] Verify all domain modules compile: `./gradlew :feature:auth:domain:build :feature:clinics:domain:build :feature:doctors:domain:build :feature:appointments:domain:build :feature:chat:domain:build`
 
 ### Dependency Graph Analysis
 
-- [ ] T101 [US2] Create script or task to analyze dependency graph: `./gradlew :app:dependencies > dependencies.txt`
-- [ ] T102 [US2] Verify no circular dependencies exist in dependency graph output
-- [ ] T103 [US2] Verify core:auth-contract does NOT depend on core:network in dependency graph
-- [ ] T104 [US2] Verify all domain modules have no Android/Retrofit/Room dependencies (manual code review or script)
+- [ ] T102 [US2] Create script or task to analyze dependency graph: `./gradlew :app:dependencies > dependencies.txt`
+- [ ] T103 [US2] Verify no circular dependencies exist in dependency graph output
+- [ ] T104 [US2] Verify core:auth-contract does NOT depend on core:network in dependency graph
+- [ ] T105 [US2] Verify all domain modules have no Android/Retrofit/Room dependencies (manual code review or script)
 
 **Commands to verify**: `./gradlew test`
 

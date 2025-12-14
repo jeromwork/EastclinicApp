@@ -7,7 +7,7 @@
 
 - Android Studio Hedgehog (2023.1.1) или новее
 - JDK 17 или новее
-- Android SDK (API 24+)
+- Android SDK (API 26+ — Android 8.0+)
 - Git
 
 ## Setup

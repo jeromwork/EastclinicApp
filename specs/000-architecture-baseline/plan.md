@@ -29,7 +29,7 @@
 - Robolectric для Android-тестов
 - Compose Testing (compose-ui-test-junit4) для UI тестов
 - Espresso (опционально) для интеграционных UI тестов
-**Target Platform**: Android API 24+ (Android 7.0+)  
+**Target Platform**: Android API 26+ (Android 8.0+) — для современного Compose MVP  
 **Project Type**: Mobile (Android native)  
 **Performance Goals**: 
 - Сборка проекта < 2 минут на стандартной машине
