@@ -23,12 +23,13 @@
 
 **Storage**: Не используется на Step 0 (core:database отложен)  
 **Testing**: 
-- JUnit 5 для unit тестов
+- JUnit 4 для всех тестов (стандарт Android экосистемы, проще и стабильнее для Step 0)
 - MockK для моков
 - Turbine для тестирования Flow
-- Robolectric для Android-тестов
-- Compose Testing (compose-ui-test-junit4) для UI тестов
-- Espresso (опционально) для интеграционных UI тестов
+- kotlinx-coroutines-test для тестирования корутин
+- Compose Testing (compose-ui-test-junit4) для UI тестов (опционально для Step 0)
+- Robolectric (опционально для Step 0, добавить позже при необходимости)
+- Espresso (не используется на Step 0)
 **Target Platform**: Android API 26+ (Android 8.0+) — для современного Compose MVP  
 **Project Type**: Mobile (Android native)  
 **Performance Goals**: 
