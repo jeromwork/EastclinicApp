@@ -16,8 +16,59 @@ Thumbs.db
 build/
 .gradle/
 *.iml
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+.gradle/
+local.properties
+proguard/
+*.log
+*.hprof
+*.keystore
+!debug.keystore
+captures/
+.externalNativeBuild
+.cxx/
+*.ap_
+*.apk
+*.aab
+
+# Kotlin
+*.kt.swp
+*.kt.swo
 
 # Local environment
 .env
 .env.local
+*.env
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
 
