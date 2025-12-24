@@ -9,3 +9,5 @@ sealed class LoginUiEffect : UiEffect {
     data class NavigateToHome(val route: String) : LoginUiEffect()
     data class ShowError(val message: String) : LoginUiEffect()
 }
+
+

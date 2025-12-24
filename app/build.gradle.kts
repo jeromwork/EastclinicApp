@@ -72,3 +72,5 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     debugImplementation(libs.bundles.compose.debug)
 }
+
+

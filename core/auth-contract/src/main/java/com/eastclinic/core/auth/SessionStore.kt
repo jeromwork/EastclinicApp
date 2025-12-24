@@ -19,3 +19,5 @@ data class Session(
     val token: String,
     val refreshToken: String? = null
 )
+
+

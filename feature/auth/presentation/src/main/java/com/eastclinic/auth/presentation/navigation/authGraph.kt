@@ -11,3 +11,5 @@ fun NavGraphBuilder.authGraph(
         LoginScreen(onNavigateToHome = onNavigateToHome)
     }
 }
+
+

@@ -17,3 +17,5 @@ object ResultFactory {
     fun <T> unknownError(message: String, cause: Throwable? = null): Result<T> =
         Result.Error(AppError.UnknownError(message, cause))
 }
+
+

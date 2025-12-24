@@ -13,3 +13,5 @@ object AppErrorFactory {
     fun unknownError(message: String = "Unknown error", cause: Throwable? = null): AppError =
         AppError.UnknownError(message, cause)
 }
+
+

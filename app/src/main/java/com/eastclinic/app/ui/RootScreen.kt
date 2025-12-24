@@ -19,3 +19,5 @@ fun RootScreen() {
         Text("Eastclinic App - Root Screen")
     }
 }
+
+

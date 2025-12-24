@@ -27,3 +27,5 @@ class NetworkErrorMapperTest {
         assertNull(networkAppError.code)
     }
 }
+
+

@@ -5,3 +5,5 @@ package com.eastclinic.core.ui
  * Feature modules can create their own sealed classes implementing this interface.
  */
 interface UiEffect
+
+

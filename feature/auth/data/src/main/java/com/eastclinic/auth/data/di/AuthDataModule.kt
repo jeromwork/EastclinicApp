@@ -17,3 +17,5 @@ abstract class AuthDataModule {
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
 }
+
+

@@ -17,3 +17,5 @@ data class Notification(
     val body: String,
     val data: Map<String, String> = emptyMap()
 )
+
+

@@ -21,3 +21,5 @@ sealed class AppError {
         val cause: Throwable? = null
     ) : AppError()
 }
+
+

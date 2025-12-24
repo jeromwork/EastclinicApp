@@ -19,3 +19,5 @@ class ResultTest {
         assertEquals(error, (result as Result.Error).error)
     }
 }
+
+

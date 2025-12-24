@@ -8,3 +8,5 @@ data class NetworkError(
     val code: Int? = null,
     val cause: Throwable? = null
 )
+
+

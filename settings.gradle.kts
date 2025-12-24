@@ -46,3 +46,5 @@ include(":feature:appointments:data")
 include(":feature:chat:presentation")
 include(":feature:chat:domain")
 include(":feature:chat:data")
+
+

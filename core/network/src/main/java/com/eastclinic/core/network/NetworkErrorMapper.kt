@@ -11,3 +11,5 @@ fun NetworkError.toAppError(): AppError {
         code = this.code
     )
 }
+
+

@@ -6,3 +6,5 @@ package com.eastclinic.core.ui
 interface AppDestination {
     val route: String
 }
+
+
