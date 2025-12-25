@@ -29,6 +29,11 @@ subprojects {
             // Используем Java из Gradle JDK (настроен в Android Studio)
             options.release.set(17)
         }
+
+        // Запускаем unit-тесты на JUnit Platform (JUnit 5), с поддержкой Vintage для JUnit4 тестов
+        tasks.withType<Test>().configureEach {
+            useJUnitPlatform()
+        }
     }
 }
 
