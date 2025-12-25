@@ -10,10 +10,9 @@ dependencies {
     implementation(libs.bundles.coroutines)
     
     // Test dependencies
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.turbine)
+    testImplementation(libs.bundles.test.unit)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 

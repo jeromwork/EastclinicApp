@@ -8,10 +8,10 @@ version = "1.0.0"
 
 android {
     namespace = "com.eastclinic.core.ui"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     compileOptions {
@@ -29,6 +29,12 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
     }
 }
 

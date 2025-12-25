@@ -7,9 +7,9 @@ version = "1.0.0"
 
 dependencies {
     // Test dependencies
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.turbine)
+    testImplementation(libs.bundles.test.unit)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 
