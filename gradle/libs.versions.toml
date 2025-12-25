@@ -25,6 +25,9 @@ okhttp = "4.12.0"
 # Coroutines
 coroutines = "1.7.3"
 
+# Dependency Injection
+javax-inject = "1"
+
 # Testing
 junit-jupiter = "5.10.1"
 junit-vintage = "5.10.1"
@@ -63,6 +66,9 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Dependency Injection
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javax-inject" }
 
 # Testing
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit-jupiter" }
