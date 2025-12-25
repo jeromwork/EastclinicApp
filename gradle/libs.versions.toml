@@ -14,6 +14,7 @@ compose-compiler = "1.5.8"
 # Hilt
 hilt = "2.48"
 hilt-navigation-compose = "1.1.0"
+hilt-android-testing = "2.48"
 
 # Navigation
 navigation-compose = "2.7.6"
@@ -34,8 +35,6 @@ junit-vintage = "5.10.1"
 junit-android = "1.1.5"
 mockk = "1.13.8"
 turbine = "1.0.0"
-compose-ui-test = "1.5.4"
-compose-ui-test-junit4 = "1.5.4"
 kotlinx-coroutines-test = "1.7.3"
 
 [libraries]
@@ -53,6 +52,7 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-android-testing" }
 
 # Navigation
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
@@ -78,8 +78,8 @@ junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engi
 junit-android = { group = "androidx.test.ext", name = "junit", version.ref = "junit-android" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test", version.ref = "compose-ui-test" }
-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose-ui-test-junit4" }
+compose-ui-test = { group = "androidx.compose.ui", name = "ui-test" } # версия через Compose BOM
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" } # версия через Compose BOM
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 
 [plugins]

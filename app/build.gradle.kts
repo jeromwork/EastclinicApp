@@ -16,7 +16,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Hilt-aware runner for instrumented tests
+        testInstrumentationRunner = "dagger.hilt.android.testing.HiltTestRunner"
     }
 
     buildTypes {
@@ -77,6 +78,8 @@ dependencies {
 
     androidTestImplementation(libs.bundles.test.ui)
     androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.bundles.compose.debug)
 }
 

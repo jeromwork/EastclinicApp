@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -39,9 +40,17 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
-            state.isLoading -> CircularProgressIndicator()
-            state.errorMessage != null -> Text(text = state.errorMessage!!)
-            else -> Text(text = state.greeting)
+            state.isLoading -> CircularProgressIndicator(
+                modifier = Modifier.testTag("loading_indicator")
+            )
+            state.errorMessage != null -> Text(
+                text = state.errorMessage!!,
+                modifier = Modifier.testTag("error_text")
+            )
+            else -> Text(
+                text = state.greeting,
+                modifier = Modifier.testTag("greeting_text")
+            )
         }
 
         Button(
