@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.eastclinic.app"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.eastclinic.app"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -45,6 +45,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
@@ -57,17 +63,18 @@ dependencies {
     
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
-    
-    // Feature modules
-    implementation(project(":feature:auth:presentation"))
+    implementation(project(":core:async"))
+
+    // Feature modules (reference)
     implementation(project(":feature:home:presentation"))
-    implementation(project(":feature:clinics:presentation"))
-    implementation(project(":feature:doctors:presentation"))
-    implementation(project(":feature:appointments:presentation"))
-    implementation(project(":feature:chat:presentation"))
-    
+    implementation(project(":feature:home:data"))
+    implementation(project(":feature:home:domain"))
+
     // Test dependencies
     testImplementation(libs.bundles.test.unit)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     androidTestImplementation(libs.bundles.test.ui)
     androidTestImplementation(platform(libs.compose.bom))
     debugImplementation(libs.bundles.compose.debug)
