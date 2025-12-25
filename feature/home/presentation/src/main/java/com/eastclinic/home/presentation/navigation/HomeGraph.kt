@@ -11,31 +11,26 @@ import com.eastclinic.home.presentation.SplashScreen
 fun NavGraphBuilder.homeGraph(
     navController: NavHostController
 ) {
-    navigation(
-        startDestination = HomeRoutes.SPLASH,
-        route = HomeRoutes.ROOT
-    ) {
-        composable(HomeRoutes.SPLASH) {
-            SplashScreen(
-                onFinished = {
-                    navController.navigate(HomeRoutes.HOME) {
-                        popUpTo(HomeRoutes.SPLASH) { inclusive = true }
-                    }
+    composable(HomeRoutes.SPLASH) {
+        SplashScreen(
+            onFinished = {
+                navController.navigate(HomeRoutes.HOME) {
+                    popUpTo(HomeRoutes.SPLASH) { inclusive = true }
                 }
-            )
-        }
+            }
+        )
+    }
 
-        composable(HomeRoutes.HOME) {
-            HomeScreen(
-                onNavigateToSettings = {
-                    navController.navigate(HomeRoutes.SETTINGS)
-                }
-            )
-        }
+    composable(HomeRoutes.HOME) {
+        HomeScreen(
+            onNavigateToSettings = {
+                navController.navigate(HomeRoutes.SETTINGS)
+            }
+        )
+    }
 
-        composable(HomeRoutes.SETTINGS) {
-            SettingsScreen()
-        }
+    composable(HomeRoutes.SETTINGS) {
+        SettingsScreen()
     }
 }
 

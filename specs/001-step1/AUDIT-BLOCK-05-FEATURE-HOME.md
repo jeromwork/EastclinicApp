@@ -494,3 +494,4 @@ feature:home:domain
 ✅ Навигация работает  
 ✅ UI паттерн (State/Event/Effect) соблюден
 
+

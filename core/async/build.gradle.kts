@@ -8,6 +8,7 @@ version = "1.0.0"
 dependencies {
     implementation(project(":core:common"))
     implementation(libs.bundles.coroutines)
+    implementation(libs.javax.inject)
     
     // Test dependencies
     testImplementation(libs.bundles.test.unit)

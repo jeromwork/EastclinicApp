@@ -9,7 +9,7 @@ import com.eastclinic.home.presentation.navigation.homeGraph
 @Composable
 fun RootNavGraph(
     navController: NavHostController,
-    startDestination: String = HomeRoutes.ROOT
+    startDestination: String = HomeRoutes.SPLASH
 ) {
     NavHost(
         navController = navController,
