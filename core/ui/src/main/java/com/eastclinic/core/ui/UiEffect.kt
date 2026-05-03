@@ -7,3 +7,4 @@ package com.eastclinic.core.ui
 interface UiEffect
 
 
+
