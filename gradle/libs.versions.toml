@@ -1,6 +1,6 @@
 [versions]
 # Android & Gradle
-agp = "8.1.4"
+agp = "8.2.1"
 gradle = "8.10"
 kotlin = "1.9.22"
 
@@ -21,6 +21,13 @@ okhttp = "4.12.0"
 
 # Coroutines
 coroutines = "1.7.3"
+
+# Auth & Security
+play-services-auth = "21.0.0"
+security-crypto = "1.1.0-alpha06"
+
+# QR Generation
+zxing-android-embedded = "4.3.0"
 
 # Testing
 junit = "4.13.2"
@@ -69,6 +76,16 @@ compose-ui-test = { group = "androidx.compose.ui", name = "ui-test", version.ref
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose-ui-test-junit4" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 
+# Auth & Security
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "security-crypto" }
+
+# QR Generation
+zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxing-android-embedded" }
+
+# Dependency Injection
+javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -76,6 +93,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.1" }
 
 [bundles]
 compose = [

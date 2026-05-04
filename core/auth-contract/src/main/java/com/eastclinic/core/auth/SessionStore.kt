@@ -17,8 +17,17 @@ interface SessionStore {
 data class Session(
     val userId: String,
     val token: String,
-    val refreshToken: String? = null
+    val refreshToken: String? = null,
+    val status: SessionUserStatus = SessionUserStatus.UNCONFIRMED,
+    val userName: String? = null,
+    val userPhone: String? = null
 )
+
+enum class SessionUserStatus {
+    UNCONFIRMED,
+    CONFIRMED,
+    BLOCKED
+}
 
 
 

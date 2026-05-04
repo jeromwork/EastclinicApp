@@ -21,14 +21,24 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
     implementation(project(":feature:auth:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:common"))
+    implementation(project(":core:auth-contract"))
     
     implementation(libs.hilt.android)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.bundles.network)
+    implementation(libs.security.crypto)
+    implementation(libs.play.services.auth)
     kapt(libs.hilt.compiler)
 }
 

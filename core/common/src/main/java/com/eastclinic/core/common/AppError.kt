@@ -20,6 +20,20 @@ sealed class AppError {
         override val message: String,
         val cause: Throwable? = null
     ) : AppError()
+    
+    data class AuthError(
+        override val message: String,
+        val type: AuthErrorType = AuthErrorType.UNKNOWN
+    ) : AppError()
+    
+    enum class AuthErrorType {
+        GOOGLE_CANCELLED,
+        GOOGLE_SIGN_IN_FAILED,
+        INVALID_TOKEN,
+        UNAUTHORIZED,
+        USER_BLOCKED,
+        UNKNOWN
+    }
 }
 
 

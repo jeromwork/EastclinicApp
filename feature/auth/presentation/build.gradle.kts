@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -27,6 +28,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
+
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -47,6 +52,9 @@ dependencies {
     // Test dependencies
     testImplementation(libs.bundles.test.unit)
     testImplementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // QR Generation
+    implementation(libs.zxing.android.embedded)
 }
 
 

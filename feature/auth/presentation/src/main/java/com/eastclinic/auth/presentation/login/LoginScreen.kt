@@ -24,6 +24,14 @@ fun LoginScreen(
                 is LoginUiEffect.NavigateToHome -> {
                     onNavigateToHome("home")
                 }
+                is LoginUiEffect.NavigateToProfileCompletion -> {
+                    onNavigateToHome("auth/profile-completion/${effect.provider}/${effect.token}")
+                }
+                is LoginUiEffect.LaunchSocialLogin -> {
+                    // In a real app, this would launch the Google SDK
+                    // For now, we simulate success with a token
+                    viewModel.handleEvent(LoginUiEvent.SocialTokenReceived("google", "dummy_token"))
+                }
                 is LoginUiEffect.ShowError -> {
                     // Error is shown in UI state
                 }
@@ -39,16 +47,31 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Login Screen",
+            text = "Eastclinic Auth",
             style = MaterialTheme.typography.headlineMedium
         )
         
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Button(
+            onClick = { viewModel.handleEvent(LoginUiEvent.SocialLoginClicked) },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            enabled = !uiState.isLoading,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+        ) {
+            Text("Войти через Google")
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         
+        Text("или", style = MaterialTheme.typography.bodySmall)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         OutlinedTextField(
             value = uiState.username,
             onValueChange = { viewModel.handleEvent(LoginUiEvent.UsernameChanged(it)) },
-            label = { Text("Username") },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
         
@@ -57,7 +80,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = uiState.password,
             onValueChange = { viewModel.handleEvent(LoginUiEvent.PasswordChanged(it)) },
-            label = { Text("Password") },
+            label = { Text("Пароль") },
             modifier = Modifier.fillMaxWidth()
         )
         
@@ -65,13 +88,23 @@ fun LoginScreen(
         
         Button(
             onClick = { viewModel.handleEvent(LoginUiEvent.LoginClicked) },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             enabled = !uiState.isLoading
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
             } else {
-                Text("Login")
+                Text("Войти")
             }
+        }
+
+        // T032 [DEBUG] Simulate New User
+        TextButton(
+            onClick = { 
+                viewModel.handleEvent(LoginUiEvent.SocialTokenReceived("google", "new_user_token"))
+            }
+        ) {
+            Text("[DEBUG] Simulate New User (404 Handshake)")
         }
         
         uiState.error?.let { error ->

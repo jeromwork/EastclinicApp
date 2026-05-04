@@ -7,8 +7,19 @@ import com.eastclinic.core.common.Result
  */
 data class User(
     val id: String,
-    val name: String
+    val firstName: String,
+    val lastName: String,
+    val middleName: String?,
+    val phone: String,
+    val email: String,
+    val status: UserStatus
 )
+
+enum class UserStatus {
+    UNCONFIRMED,
+    CONFIRMED,
+    BLOCKED
+}
 
 
 

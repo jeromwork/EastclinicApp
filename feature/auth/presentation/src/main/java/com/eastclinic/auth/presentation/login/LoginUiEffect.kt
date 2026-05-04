@@ -7,7 +7,9 @@ import com.eastclinic.core.ui.UiEffect
  */
 sealed class LoginUiEffect : UiEffect {
     data class NavigateToHome(val route: String) : LoginUiEffect()
+    data class NavigateToProfileCompletion(val provider: String, val token: String) : LoginUiEffect()
     data class ShowError(val message: String) : LoginUiEffect()
+    object LaunchSocialLogin : LoginUiEffect()
 }
 
 

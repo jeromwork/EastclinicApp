@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -45,6 +46,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
+
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -60,11 +65,15 @@ dependencies {
     
     // Feature modules
     implementation(project(":feature:auth:presentation"))
+    implementation(project(":feature:auth:data"))
     implementation(project(":feature:home:presentation"))
     implementation(project(":feature:clinics:presentation"))
     implementation(project(":feature:doctors:presentation"))
     implementation(project(":feature:appointments:presentation"))
     implementation(project(":feature:chat:presentation"))
+    
+    implementation(libs.play.services.auth)
+    implementation(libs.zxing.android.embedded)
     
     // Test dependencies
     testImplementation(libs.bundles.test.unit)

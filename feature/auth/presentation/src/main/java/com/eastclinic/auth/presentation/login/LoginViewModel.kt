@@ -36,26 +36,51 @@ class LoginViewModel @Inject constructor(
             is LoginUiEvent.LoginClicked -> {
                 login()
             }
+            is LoginUiEvent.SocialLoginClicked -> {
+                viewModelScope.launch {
+                    _uiEffect.emit(LoginUiEffect.LaunchSocialLogin)
+                }
+            }
+            is LoginUiEvent.SocialTokenReceived -> {
+                socialLogin(event.provider, event.token)
+            }
         }
     }
-    
+
     private fun login() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
+            val result = authRepository.login(_uiState.value.username, _uiState.value.password)
+            _uiState.update { it.copy(isLoading = false) }
+            when (result) {
+                is Result.Success -> _uiEffect.emit(LoginUiEffect.NavigateToHome("home"))
+                is Result.Error -> _uiEffect.emit(LoginUiEffect.ShowError(result.error.message))
+            }
+        }
+    }
+    
+    private fun socialLogin(provider: String, token: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
             
-            val result = authRepository.login(
-                username = _uiState.value.username,
-                password = _uiState.value.password
-            )
+            val result = authRepository.handshakeSocial(provider, token)
             
             _uiState.update { it.copy(isLoading = false) }
             
             when (result) {
                 is Result.Success -> {
+                    // Success means session established
                     _uiEffect.emit(LoginUiEffect.NavigateToHome("home"))
                 }
                 is Result.Error -> {
-                    _uiEffect.emit(LoginUiEffect.ShowError(result.error.message))
+                    // If error is 404 (or specific status), it might mean new user
+                    // In our case, Backend handshake returns 401/404 if user not found
+                    // Or we can check a specific error type
+                    if (result.error.message.contains("404") || result.error.message.contains("not found")) {
+                        _uiEffect.emit(LoginUiEffect.NavigateToProfileCompletion(provider, token))
+                    } else {
+                        _uiEffect.emit(LoginUiEffect.ShowError(result.error.message))
+                    }
                 }
             }
         }

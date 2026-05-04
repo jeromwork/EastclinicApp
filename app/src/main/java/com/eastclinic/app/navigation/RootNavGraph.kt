@@ -24,7 +24,7 @@ object RootRoutes {
 @androidx.compose.runtime.Composable
 fun RootNavGraph(
     navController: NavHostController,
-    startDestination: String = RootRoutes.ROOT
+    startDestination: String = AuthRoutes.LOGIN
 ) {
     NavHost(
         navController = navController,
@@ -43,7 +43,9 @@ fun RootNavGraph(
         )
         
         composable(RootRoutes.HOME) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToVerification = { navController.navigate(AuthRoutes.VERIFICATION) }
+            )
         }
         
         composable(RootRoutes.CLINICS) {
